@@ -1,14 +1,29 @@
 from paste.request import parse_formvars
+from os import path
 
-
-def servePage(page, template_vars=None):
-    with open (page + ".html", "r") as p:
+def serve_page(page, template_vars=None):
+    with open ("./views/" + page + ".html", "r") as p:
         template = p.readlines()
         if template_vars == None:
             return template
         for e in template_vars.keys():
             template = [line.replace("{{" + e + "}}", template_vars[e]) for line in template]
         return template
+
+def serve_css(path):
+    try:
+        with open("./" + path, "r") as p:
+            return p.readlines()
+    except IOError:
+            return ["no such file"]
+            
+
+def serve_javascript(path):
+    try:
+        with open("./" + path, "r") as p:
+            return p.readlines()
+    except IOError:
+            return ["no such file"]
 
 def app(environ, start_response):
     if environ['REQUEST_METHOD'] == 'GET':
@@ -21,10 +36,21 @@ def app(environ, start_response):
         return ["We just handle get and post requests"]
 
 def handle_get_request(environ, start_response):
+    static_files = [e for e in environ['PATH_INFO'].split("/") if e]
+    
     if environ['PATH_INFO'] in router:
         path = environ['PATH_INFO']
         start_response('200 OK', [('content-type', 'text/html')])
         return router[path].get()
+    
+    elif static_files[0] == "css" and len(static_files) > 1:
+        start_response('200 OK', [('content-type', 'text/css')])
+        return serve_css(environ['PATH_INFO'])
+
+    elif static_files[0] == "js" and len(static_files) > 1:
+        start_response('200 OK', [('content-type', 'application/javascript')])
+        return serve_javascript(environ['PATH_INFO'])
+
     else:
         start_response('404 error', [('content-type', 'text/html')])
         return ["ERROR 404 sucka"]
@@ -42,31 +68,31 @@ def handle_post_request(environ, start_response):
 class Index(object):
     @classmethod
     def get(self):
-        return servePage("index", {"name": "Timur", "phone": "444-999-7777"})
+        return serve_page("index", {"name": "Timur", "phone": "444-999-7777"})
 
     @classmethod
     def post(self, fields):
-        return servePage("index", fields)
+        return serve_page("index", fields)
         
 
 class Hello(object):
     @classmethod
     def get(self):
-        return servePage("hello")
+        return serve_page("hello")
     
     @classmethod
     def post(self, fields):
-        return servePage("hello", fields)
+        return serve_page("hello", fields)
         
 
 class Whut(object):
     @classmethod
     def get(self):
-        return servePage("whut")
+        return serve_page("whut")
 
     @classmethod
     def post(self, fields):
-        return servePage("whut", fields)
+        return serve_page("whut", fields)
         
 
 
