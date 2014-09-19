@@ -18,7 +18,7 @@ def app(environ, start_response):
         return handle_post_request(environ, start_response)
     else:
         start_response('200 OK', [('content-type', 'text/html')])
-        return ["Nope"]
+        return ["We just handle get and post requests"]
 
 def handle_get_request(environ, start_response):
     if environ['PATH_INFO'] in router:
