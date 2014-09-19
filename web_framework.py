@@ -1,5 +1,4 @@
 from paste.request import parse_formvars
-from os import path
 
 def serve_page(page, template_vars=None):
     with open ("./views/" + page + ".html", "r") as p:
