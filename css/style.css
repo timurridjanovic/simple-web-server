@@ -1,4 +1,22 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
 
 h1 {
     color: #00a6a0;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+a {
+    font-weight: bold;
+    text-decoration: none;
+    color: #00a6a0;
+}
+
+a:hover {
+    color: #666;
 }
